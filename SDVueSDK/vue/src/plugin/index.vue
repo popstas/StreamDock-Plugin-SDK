@@ -16,7 +16,20 @@ useWatchEvent('plugin', {
   },
   applicationDidLaunch(data) {
     console.log(data);
-  }
+  },
+  keyUpCord(data) {
+    plugin.eventEmitter.emit("keyUpCord", data);
+  },
+  keyDownCord(data) {
+    plugin.eventEmitter.emit("keyDownCord", data);
+  },
+  stopBackground(data) {
+    plugin.eventEmitter.emit("stopBackground", data);
+  },
+  lockScreen(data) {
+  },
+  unLockScreen(data) {
+  },
 });
 </script>
 

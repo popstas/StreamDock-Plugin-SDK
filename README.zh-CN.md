@@ -47,14 +47,14 @@
 - API 参考文档
 - 常见问题解答
 
-访问[AI生成的文档](https://zread.ai/MiraboxSpace/StreamDock-Plugin-SDK)获取：
+访问[AI生成的文档](https://deepwiki.com/MiraboxSpace/StreamDock-Plugin-SDK)获取：
 
 - 详细的插件开发指南
 - 各语言模板的详细文档
 
 自行构建SDK模板推荐查看[官方开发文档](https://sdk.key123.vip/)
 
-快速上手使用本仓库的模板开发插件推荐查看[AI生成的文档](https://zread.ai/MiraboxSpace/StreamDock-Plugin-SDK)
+快速上手使用本仓库的模板开发插件推荐查看[AI生成的文档](https://deepwiki.com/MiraboxSpace/StreamDock-Plugin-SDK)
 
 ## 🎯 插件发布
 

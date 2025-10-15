@@ -29,12 +29,15 @@ export const usePluginStore = defineStore('pluginStore', () => {
   const message = ref<StreamDock.Message>();
   const server = new WebSocket('ws://127.0.0.1:' + window.argv[0]);
   server.onopen = () => server.send(JSON.stringify({ event: window.argv[2], uuid: window.argv[1] }));
-  server.onmessage = (e) => (
+  server.onmessage = (e) => {
     message.value = JSON.parse(e.data)
-  );
+    // console.log(e.data)
+  };
 
   //全局设置数据
   const globalSettings = ref<any>();
+  const devices = ref<Set<string>>(new Set());
+  const userInfo = ref<any>({});
   //设置全局设置数据
   const setGlobalSettings = (payload: any) => {
     server.send(JSON.stringify({ event: 'setGlobalSettings', context: window.argv[1], payload }));
@@ -45,6 +48,37 @@ export const usePluginStore = defineStore('pluginStore', () => {
   const getGlobalSettings = () => {
     server.send(JSON.stringify({ event: 'getGlobalSettings', context: window.argv[1] }));
   }
+
+  // 设置背景
+  const setBackground = (img: string, device: string, clearIcon = true) => {
+    server.send(JSON.stringify({
+      "event": "setBackground",
+      "device": device,
+      "payload": {
+        "image": img,
+        "clearIcon": clearIcon
+      }
+    }));
+  };
+
+  // 通知软件背景停了
+  const stopBackground = (device: string) => {
+    server.send(JSON.stringify({
+      "event": "stopBackground",
+      "device": device,
+      "payload": {
+        "clearIcon": true// 如果设置背景的时候设置了清除图标true就需要带上这个参数并设置为true(告诉软件需要恢复图标)
+      }
+    }));
+  };
+
+  // 获取用户信息
+  const getUserInfo = () => {
+    server.send(JSON.stringify({
+      "event": "getUserInfo"
+    }));
+  };
+
 
   // 操作数据存储
   class Actions {
@@ -126,15 +160,64 @@ export const usePluginStore = defineStore('pluginStore', () => {
     openUrl = (url: string) => {
       server.send(JSON.stringify({ event: 'openUrl', payload: { url } }));
     };
+
+    // 注册屏保事件（告诉软件需要独占屏保，可以自行维护进入屏保的时间（unLockScreen唤醒后仍然可以自行根据设置的锁屏时间触发锁屏），当收到unRegistrationScreenSaverEvent后则标识品保独占给到了其他的插件此插件应该停止屏保的逻辑（清除进入屏保的定时器））
+    registrationScreenSaverEvent = (device: string) => {
+      server.send(
+        JSON.stringify({
+          event: 'registrationScreenSaverEvent',
+          device: device,
+          context: this.context,
+        }),
+      );
+    };
   }
+
+  class EventEmitter {
+
+    events: { [key: string]: any[] };
+    constructor() {
+      this.events = {};
+    }
+
+    // 订阅事件
+    subscribe(event: string, listener: Function) {
+      if (!this.events[event]) {
+        this.events[event] = [];
+      }
+      this.events[event].push(listener);
+    }
+
+    // 取消订阅
+    unsubscribe(event: string) {
+      if (!this.events[event]) return;
+
+      this.events[event] = null;
+    }
+
+    // 发布事件
+    emit(event: string, data: any) {
+      if (!this.events[event]) return;
+      this.events[event].forEach(listener => listener(data));
+    }
+  }
+
+  // 非响应式事件总线，仅供全局使用
+  const eventEmitter = new EventEmitter();
 
   return {
     message,
     globalSettings,
+    eventEmitter, // 仅限逻辑使用，不用于组件响应
+    devices,
+    userInfo,
     Interval,
     Unterval,
     setGlobalSettings,
     getGlobalSettings,
+    setBackground,
+    stopBackground,
+    getUserInfo,
     ActionArr: Actions.list,
     getAction: Actions.getAction,
     addAction: Actions.addAction,
@@ -159,8 +242,16 @@ export const useWatchEvent = <T extends keyof MessageTypes>(type: T, MessageEven
         if (!plugin.message) return;
         if (plugin.message.action) return;
         MessageEvents[plugin.message.event]?.(JSON.parse(JSON.stringify(plugin.message)));
-        if (plugin.message.event === 'didGetGlobalSettings') {
+        if (plugin.message.event === 'didReceiveGlobalSettings') {
           plugin.globalSettings = (plugin.message.payload as payload).settings;
+        } else if (plugin.message.event === 'deviceDidConnect') {
+          // console.log('设备已连接:', plugin.message);
+          plugin.devices.add(plugin.message.device);
+        } else if (plugin.message.event === 'deviceDidDisconnect') {
+          // console.log('deviceDidDisconnect:', plugin.message);
+          plugin.devices.delete(plugin.message.device);
+        } else if (plugin.message.event === 'sendUserInfo') {
+          plugin.userInfo = plugin.message.payload;
         }
       }
     );

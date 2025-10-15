@@ -50,6 +50,46 @@ declare namespace EventPayload {
   type systemDidWakeUp = {
     event: string;
   };
+  type stopBackground = {
+    event: string;
+    device: string;
+    source?: string;
+  };
+  type lockScreen = {
+    event: string;
+    device: string;
+  };
+  type unRegistrationScreenSaverEvent = {
+    action: string;
+    event: string;
+    device: string;
+    context: string;
+  };
+  type keyUpCord = {
+    // action: string;
+    event: string;
+    device: string;
+    // context: string;
+    payload: {
+      coordinates: {
+        x: number;
+        y: number;
+      };
+      size: {
+        width: number;
+        height: number;
+      }
+    };
+    isInMultiAction: boolean;
+  };
+  type sendUserInfo = {
+    event: string;
+    payload: {
+      loginName: string;
+      loginID: string;
+      loginImageUrl: string;
+    }
+  };
   // 按下|抬起|触摸
   type keyDownUpTouchTap = {
     action: string;
@@ -245,6 +285,8 @@ declare namespace StreamDock {
     dialDown?(this: ActionMessage, data: EventPayload.KnobUPDown): void;
     keyUp?(this: ActionMessage, data: EventPayload.KnobUPDown): void;
     dialRotate?(this: ActionMessage, data: EventPayload.dialRotate): void;
+    deletesAction?(this: PluginMessage, data: EventPayload.willAppearDisappear): void;
+    unRegistrationScreenSaverEvent?(this: PluginMessage, data: EventPayload.unRegistrationScreenSaverEvent): void;
   };
 
   // 插件触发事件
@@ -257,5 +299,11 @@ declare namespace StreamDock {
     applicationDidLaunch?(this: PluginMessage, data: EventPayload.applicationDidLaunch): void;
     applicationDidTerminate?(this: PluginMessage, data: EventPayload.applicationDidTerminate): void;
     systemDidWakeUp?(this: PluginMessage, data: EventPayload.systemDidWakeUp): void;
+    keyUpCord?(this: PluginMessage, data: EventPayload.keyUpCord): void;
+    keyDownCord?(this: PluginMessage, data: EventPayload.keyUpCord): void;
+    stopBackground?(this: PluginMessage, data: EventPayload.stopBackground): void;
+    lockScreen?(this: PluginMessage, data: EventPayload.lockScreen): void;
+    unLockScreen?(this: PluginMessage, data: EventPayload.lockScreen): void;
+    sendUserInfo?(this: PluginMessage, data: EventPayload.sendUserInfo): void;
   };
 }
