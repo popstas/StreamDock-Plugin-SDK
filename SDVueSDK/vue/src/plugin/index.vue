@@ -4,7 +4,7 @@ Object.entries(import.meta.glob('@/plugin/actions/*.ts', { eager: true, import: 
   (fn as Function)(path.replace('/src/plugin/actions/', '').replace('.ts', ''))
 );
 
-// 事件侦听器
+// Event listener
 const plugin = usePluginStore();
 useWatchEvent('plugin', {
   deviceDidConnect() { },

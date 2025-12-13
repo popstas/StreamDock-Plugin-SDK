@@ -1,12 +1,12 @@
 import TabView from '@/components/tab-view.vue';
 import { defineStore } from 'pinia';
 
-// 属性钩子
+// Property hooks
 export { TabView };
 export const usePropertyStore = defineStore('propertyStore', () => {
-  document.title = window.argv[3].plugin.uuid + ' - 属性检查器';
+  document.title = window.argv[3].plugin.uuid + ' - Property Inspector';
 
-  // 监听数据
+  // Watch data
   const preventWatch = ref(false);
   const settings = ref(window.argv[4].payload.settings);
   watch(
@@ -24,7 +24,7 @@ export const usePropertyStore = defineStore('propertyStore', () => {
     { deep: true }
   );
 
-  // 连接软件
+  // Connect to software
   const message = ref<StreamDock.Message>();
   const server = new WebSocket('ws://127.0.0.1:' + window.argv[0]);
   server.onopen = () => server.send(JSON.stringify({ event: window.argv[2], uuid: window.argv[1] }));
@@ -32,7 +32,7 @@ export const usePropertyStore = defineStore('propertyStore', () => {
     message.value = JSON.parse(e.data)
   };
 
-  // 通知插件
+  // Notify plugin
   const sendToPlugin = (payload: any) => {
     server.send(
       JSON.stringify({
@@ -44,7 +44,7 @@ export const usePropertyStore = defineStore('propertyStore', () => {
     );
   };
 
-  // 更改状态
+  // Change state
   const setState = (state: number) => {
     server.send(
       JSON.stringify({
@@ -55,7 +55,7 @@ export const usePropertyStore = defineStore('propertyStore', () => {
     );
   };
 
-  // 设置标题
+  // Set title
   const setTitle = (title: string) => {
     server.send(
       JSON.stringify({
@@ -78,7 +78,7 @@ export const usePropertyStore = defineStore('propertyStore', () => {
     );
   };
 
-  // 设置图片
+  // Set image
   const setImage = (url: string) => {
     if (url.includes('data:')) {
       server.send(JSON.stringify({ event: 'setImage', context: window.argv[4].context, payload: { target: 0, image: url } }));
@@ -96,7 +96,7 @@ export const usePropertyStore = defineStore('propertyStore', () => {
     };
   };
 
-  // 用默认浏览器打开
+  // Open in default browser
   const openUrl = (url: string) => {
     server.send(
       JSON.stringify({
@@ -119,7 +119,7 @@ export const usePropertyStore = defineStore('propertyStore', () => {
   };
 });
 
-// !! 请勿更改此处 !!
+// !! Do not change this !!
 export const useWatchEvent = (MessageEvents: StreamDock.ProperMessage) => {
   const property = usePropertyStore();
   const Events: StreamDock.ProperMessage = {

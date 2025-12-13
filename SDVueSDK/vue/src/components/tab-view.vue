@@ -1,4 +1,4 @@
-<!-- 请勿修改此文件 -->
+<!-- Do not modify this file -->
 <script setup lang="ts">
   defineProps<{ label: string; width?: string; alignItems?: string }>();
 </script>

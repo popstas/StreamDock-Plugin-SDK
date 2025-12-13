@@ -1,31 +1,31 @@
 import { defineStore } from 'pinia';
 
-// 插件钩子
+// Plugin hooks
 export const usePluginStore = defineStore('pluginStore', () => {
-  document.title = window.argv[3].plugin.uuid + ' - 插件';
+  document.title = window.argv[3].plugin.uuid + ' - Plugin';
 
-  // 定时器线程
+  // Timer thread
   const Timer = new Worker('interval.js');
   const TimerSubscribe: { uuid: string; fn: () => void }[] = [];
   Timer.addEventListener('message', ({ data: { event, uuid } }: { data: { event: string; uuid: string } }) => {
     const subIndex = TimerSubscribe.findIndex((item) => item.uuid === uuid);
-    subIndex !== -1 && event === 'setInterval' && TimerSubscribe[subIndex].fn();
+    subIndex !== -1 && event === 'setInterval' &&     TimerSubscribe[subIndex].fn();
   });
 
-  // 创建定时器
+  // Create timer
   const Interval = (uuid: string, delay: number, fn: () => void) => {
     TimerSubscribe.findIndex((item) => item.uuid === uuid) === -1 && TimerSubscribe.push({ uuid, fn });
     Timer.postMessage({ event: 'setInterval', uuid, delay });
   };
 
-  // 销毁定时器
+  // Destroy timer
   const Unterval = (uuid: string) => {
     const subIndex = TimerSubscribe.findIndex((item) => item.uuid === uuid);
     subIndex !== -1 && TimerSubscribe.splice(subIndex, 1);
     Timer.postMessage({ event: 'clearInterval', uuid });
   };
 
-  // 连接软件
+  // Connect to software
   const message = ref<StreamDock.Message>();
   const server = new WebSocket('ws://127.0.0.1:' + window.argv[0]);
   server.onopen = () => server.send(JSON.stringify({ event: window.argv[2], uuid: window.argv[1] }));
@@ -34,22 +34,22 @@ export const usePluginStore = defineStore('pluginStore', () => {
     // console.log(e.data)
   };
 
-  //全局设置数据
+  // Global settings data
   const globalSettings = ref<any>();
   const devices = ref<Set<string>>(new Set());
   const userInfo = ref<any>({});
-  //设置全局设置数据
+  // Set global settings data
   const setGlobalSettings = (payload: any) => {
     server.send(JSON.stringify({ event: 'setGlobalSettings', context: window.argv[1], payload }));
     globalSettings.value = payload;
   };
 
-  //获取全局设置数据
+  // Get global settings data
   const getGlobalSettings = () => {
     server.send(JSON.stringify({ event: 'getGlobalSettings', context: window.argv[1] }));
   }
 
-  // 设置背景
+  // Set background
   const setBackground = (img: string, device: string, clearIcon = true) => {
     server.send(JSON.stringify({
       "event": "setBackground",
@@ -61,18 +61,18 @@ export const usePluginStore = defineStore('pluginStore', () => {
     }));
   };
 
-  // 通知软件背景停了
+  // Notify software that background stopped
   const stopBackground = (device: string) => {
     server.send(JSON.stringify({
       "event": "stopBackground",
       "device": device,
       "payload": {
-        "clearIcon": true// 如果设置背景的时候设置了清除图标true就需要带上这个参数并设置为true(告诉软件需要恢复图标)
+        "clearIcon": true// If clearIcon was set to true when setting background, this parameter must be included and set to true (tell software to restore icon)
       }
     }));
   };
 
-  // 获取用户信息
+  // Get user info
   const getUserInfo = () => {
     server.send(JSON.stringify({
       "event": "getUserInfo"
@@ -80,7 +80,7 @@ export const usePluginStore = defineStore('pluginStore', () => {
   };
 
 
-  // 操作数据存储
+  // Action data storage
   class Actions {
     settings: {};
     action: string;
@@ -93,7 +93,7 @@ export const usePluginStore = defineStore('pluginStore', () => {
       this.settings = settings;
     }
 
-    // 添加操作
+    // Add action
     static list: Actions[] = [];
     static addAction = (action: string, context: string, settings: {}) => {
       const instance = new Actions(action, context, settings);
@@ -101,38 +101,38 @@ export const usePluginStore = defineStore('pluginStore', () => {
       return instance;
     };
 
-    // 删除操作
+    // Delete action
     static delAction = (context: string) => {
       const i = this.list.findIndex((item) => item.context === context);
       i !== -1 && this.list.splice(i, 1);
     };
 
-    // 获取操作数据
+    // Get action data
     static getAction = (context: string) => {
       return Actions.list.find((item) => item.context === context);
     };
 
-    // 获取所有操作数据
+    // Get all action data
     static getActions = (action: string) => {
       return this.list.filter((item) => item.action === action);
     };
 
-    // 通知属性检查器
+    // Notify property inspector
     sendToPropertyInspector = (payload: any) => {
       server.send(JSON.stringify({ event: 'sendToPropertyInspector', action: this.action, context: this.context, payload }));
     };
 
-    // 切换状态
+    // Toggle state
     setState = (state: number) => {
       server.send(JSON.stringify({ event: 'setState', context: this.context, payload: { state } }));
     };
 
-    // 设置标题
+    // Set title
     setTitle = (title: string) => {
       server.send(JSON.stringify({ event: 'setTitle', context: this.context, payload: { title, target: 0 } }));
     };
 
-    // 设置图片
+    // Set image
     setImage = (url: string) => {
       if (url.includes('data:')) {
         server.send(JSON.stringify({ event: 'setImage', context: this.context, payload: { target: 0, image: url } }));
@@ -150,18 +150,18 @@ export const usePluginStore = defineStore('pluginStore', () => {
       };
     };
 
-    // 设置持久化数据
+    // Set persistent data
     setSettings = (payload: any) => {
       this.settings = payload;
       server.send(JSON.stringify({ event: 'setSettings', context: this.context, payload }));
     };
 
-    // 默认浏览器打开
+    // Open in default browser
     openUrl = (url: string) => {
       server.send(JSON.stringify({ event: 'openUrl', payload: { url } }));
     };
 
-    // 注册屏保事件（告诉软件需要独占屏保，可以自行维护进入屏保的时间（unLockScreen唤醒后仍然可以自行根据设置的锁屏时间触发锁屏），当收到unRegistrationScreenSaverEvent后则标识品保独占给到了其他的插件此插件应该停止屏保的逻辑（清除进入屏保的定时器））
+    // Register screen saver event (tell software exclusive screen saver needed, can maintain screen saver entry time (after unLockScreen wake can still trigger lock screen based on set lock time), when unRegistrationScreenSaverEvent received means screen saver exclusive given to other plugin, this plugin should stop screen saver logic (clear screen saver entry timer))
     registrationScreenSaverEvent = (device: string) => {
       server.send(
         JSON.stringify({
@@ -180,7 +180,7 @@ export const usePluginStore = defineStore('pluginStore', () => {
       this.events = {};
     }
 
-    // 订阅事件
+    // Subscribe to event
     subscribe(event: string, listener: Function) {
       if (!this.events[event]) {
         this.events[event] = [];
@@ -188,27 +188,27 @@ export const usePluginStore = defineStore('pluginStore', () => {
       this.events[event].push(listener);
     }
 
-    // 取消订阅
+    // Unsubscribe
     unsubscribe(event: string) {
       if (!this.events[event]) return;
 
       this.events[event] = null;
     }
 
-    // 发布事件
+    // Publish event
     emit(event: string, data: any) {
       if (!this.events[event]) return;
       this.events[event].forEach(listener => listener(data));
     }
   }
 
-  // 非响应式事件总线，仅供全局使用
+  // Non-reactive event bus, for global use only
   const eventEmitter = new EventEmitter();
 
   return {
     message,
     globalSettings,
-    eventEmitter, // 仅限逻辑使用，不用于组件响应
+    eventEmitter, // For logic use only, not for component reactivity
     devices,
     userInfo,
     Interval,
@@ -226,7 +226,7 @@ export const usePluginStore = defineStore('pluginStore', () => {
   };
 });
 
-// !! 请勿更改此处 !!
+// !! Do not change this !!
 type MessageTypes = { plugin: StreamDock.PluginMessage; action: StreamDock.ActionMessage };
 type payload = {
   settings: any;
@@ -245,7 +245,7 @@ export const useWatchEvent = <T extends keyof MessageTypes>(type: T, MessageEven
         if (plugin.message.event === 'didReceiveGlobalSettings') {
           plugin.globalSettings = (plugin.message.payload as payload).settings;
         } else if (plugin.message.event === 'deviceDidConnect') {
-          // console.log('设备已连接:', plugin.message);
+          // console.log('Device connected:', plugin.message);
           plugin.devices.add(plugin.message.device);
         } else if (plugin.message.event === 'deviceDidDisconnect') {
           // console.log('deviceDidDisconnect:', plugin.message);

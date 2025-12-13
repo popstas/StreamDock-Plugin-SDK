@@ -3,18 +3,18 @@ import { usePluginStore, useWatchEvent } from '@/hooks/plugin';
 export default function (name: string) {
   const ActionID = `${window.argv[3].plugin.uuid}.${name}`;
 
-  // 事件侦听器
+  // Event listener
   const plugin = usePluginStore();
 
   plugin.eventEmitter.subscribe("stopBackground", (data) => {
-    //停止背景释放资源
+    // Stop background and release resources
     plugin.stopBackground(data.device)
   })
 
-  // 监听事件
+  // Listen to events
   watch(() => Array.from(plugin.devices), (newDevices, oldDevices) => {
     // console.log('devices:', newDevices, oldDevices);
-    // 设备列表变化对比
+    // Compare device list changes
     const delDevices = oldDevices.filter(item => !newDevices.includes(item));
     delDevices.forEach((device) => {
 
@@ -24,7 +24,7 @@ export default function (name: string) {
   useWatchEvent('action', {
     ActionID,
     willAppear({ context }) {
-      console.log('创建:', context);
+      console.log('Created:', context);
     },
     keyUp({ context }) {
     }

@@ -2,7 +2,7 @@
 import { usePropertyStore, useWatchEvent, TabView } from '@/hooks/property';
 import { useI18nStore } from '@/hooks/i18n';
 
-// 事件侦听器
+// Event listener
 const i18n = useI18nStore();
 const property = usePropertyStore();
 useWatchEvent({
@@ -16,7 +16,7 @@ useWatchEvent({
 </script>
 
 <template>
-  <TabView :label="i18n['操作选项']">...</TabView>
+  <TabView :label="i18n['Operation options']">...</TabView>
 </template>
 
 <style lang="scss" scoped></style>

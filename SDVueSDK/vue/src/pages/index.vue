@@ -1,4 +1,4 @@
-<!-- 请勿修改此文件 -->
+<!-- Do not modify this file -->
 <script setup lang="ts">
   import { NConfigProvider, darkTheme, GlobalThemeOverrides } from 'naive-ui';
   const PropertyInspector = defineAsyncComponent(() => import(`@/pages/actions/${window.argv[4].action.split('.').pop()}.vue`));
@@ -42,7 +42,7 @@
 </template>
 
 <style>
-  /* 基本样式 */
+  /* Basic styles */
   * {
     margin: 0;
     padding: 0;
@@ -57,7 +57,7 @@
     font-family: Arial, sans-serif;
   }
 
-  /* 滚动条样式 */
+  /* Scrollbar styles */
   ::-webkit-scrollbar {
     width: 0;
   }
