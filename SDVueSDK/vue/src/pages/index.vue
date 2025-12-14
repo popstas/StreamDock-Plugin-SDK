@@ -1,6 +1,6 @@
 <!-- Do not modify this file -->
 <script setup lang="ts">
-  import { NConfigProvider, darkTheme, GlobalThemeOverrides } from 'naive-ui';
+  import { NConfigProvider, NMessageProvider, darkTheme, GlobalThemeOverrides } from 'naive-ui';
   const PropertyInspector = defineAsyncComponent(() => import(`@/pages/actions/${window.argv[4].action.split('.').pop()}.vue`));
 
   const Theme: GlobalThemeOverrides = {
@@ -37,7 +37,9 @@
 
 <template>
   <NConfigProvider :theme="darkTheme" :theme-overrides="Theme">
-    <PropertyInspector></PropertyInspector>
+    <NMessageProvider>
+      <PropertyInspector></PropertyInspector>
+    </NMessageProvider>
   </NConfigProvider>
 </template>
 

@@ -12,49 +12,49 @@
  */
 
 const Plugin = {
-  UUID: 'com.streamdock.demo',
+  UUID: 'pro.popstas.mqtt',
   version: '1.0.0',
   Icon: 'images/icon.png',
   i18n: {
     en: {
-      Name: 'Keyboard Action',
-      Description: 'StreamDock Actions'
+      Name: 'MQTT Button',
+      Description: 'MQTT Button'
     },
     zh_CN: {
-      Name: '键盘操作',
-      Description: 'StreamDock 的操作示例列表'
+      Name: 'MQTT 按钮',
+      Description: 'MQTT 按钮'
     }
   },
   Software: {
-    MinimumVersion: "6.5"
+    MinimumVersion: '6.5'
   },
   ApplicationsToMonitor: {
-    windows: [
-    ]
+    windows: []
   }
 };
 
 // Actions array
 const Actions = [
   {
-    UUID: 'action1',
+    UUID: 'mqttButton',
     Icon: 'images/icon.png',
     i18n: {
       en: {
-        Name: 'Action1',
-        Tooltip: 'This is an action'
+        Name: 'MQTT Button',
+        Tooltip: 'MQTT Button'
       },
       zh_CN: {
-        Name: '操作一',
-        Tooltip: '这是一个操作'
+        Name: 'MQTT 按钮',
+        Tooltip: 'MQTT 按钮'
       }
     },
     state: 0,
     States: [
       {
         FontSize: '10',
-        TitleAlignment: 'bottom',
-        Image: 'images/default.png'
+        TitleAlignment: 'top',
+        // Image: 'images/default.png',
+        ShowTitle: false
       }
     ],
     Settings: {},
@@ -65,4 +65,12 @@ const Actions = [
 ];
 
 // !! Do not modify !!
-module.exports = { PUUID: Plugin.UUID, ApplicationsToMonitor: Plugin.ApplicationsToMonitor, Software: Plugin.Software, Version: Plugin.version, CategoryIcon: Plugin.Icon, i18n: Plugin.i18n, Actions };
+module.exports = {
+  PUUID: Plugin.UUID,
+  ApplicationsToMonitor: Plugin.ApplicationsToMonitor,
+  Software: Plugin.Software,
+  Version: Plugin.version,
+  CategoryIcon: Plugin.Icon,
+  i18n: Plugin.i18n,
+  Actions
+};

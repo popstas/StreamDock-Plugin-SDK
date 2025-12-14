@@ -27,21 +27,34 @@ export const usePropertyStore = defineStore('propertyStore', () => {
   // Connect to software
   const message = ref<StreamDock.Message>();
   const server = new WebSocket('ws://127.0.0.1:' + window.argv[0]);
-  server.onopen = () => server.send(JSON.stringify({ event: window.argv[2], uuid: window.argv[1] }));
+  server.onopen = () => {
+    console.log('[Property Store] WebSocket connected');
+    server.send(JSON.stringify({ event: window.argv[2], uuid: window.argv[1] }));
+  };
   server.onmessage = (e) => {
-    message.value = JSON.parse(e.data)
+    console.log('[Property Store] Received message:', e.data);
+    message.value = JSON.parse(e.data);
+    console.log('[Property Store] Parsed message:', message.value);
+  };
+  server.onerror = (error) => {
+    console.error('[Property Store] WebSocket error:', error);
+  };
+  server.onclose = () => {
+    console.log('[Property Store] WebSocket closed');
   };
 
   // Notify plugin
   const sendToPlugin = (payload: any) => {
-    server.send(
-      JSON.stringify({
-        event: 'sendToPlugin',
-        action: window.argv[4].action,
-        context: window.argv[1],
-        payload
-      })
-    );
+    console.log('[Property Store] sendToPlugin called with payload:', payload);
+    const message = {
+      event: 'sendToPlugin',
+      action: window.argv[4].action,
+      context: window.argv[1],
+      payload
+    };
+    console.log('[Property Store] Sending message:', JSON.stringify(message));
+    server.send(JSON.stringify(message));
+    console.log('[Property Store] Message sent to server');
   };
 
   // Change state
@@ -73,9 +86,22 @@ export const usePropertyStore = defineStore('propertyStore', () => {
     server.send(
       JSON.stringify({
         event: 'getGlobalSettings',
-        context: window.argv[1],
+        context: window.argv[1]
       })
     );
+  };
+
+  // Set global settings
+  const setGlobalSettings = (payload: any) => {
+    console.log('[Property Store] setGlobalSettings called with payload:', payload);
+    const message = {
+      event: 'setGlobalSettings',
+      context: window.argv[1],
+      payload
+    };
+    console.log('[Property Store] Sending setGlobalSettings message:', JSON.stringify(message));
+    server.send(JSON.stringify(message));
+    console.log('[Property Store] setGlobalSettings message sent to server');
   };
 
   // Set image
@@ -112,6 +138,7 @@ export const usePropertyStore = defineStore('propertyStore', () => {
     settings,
     sendToPlugin,
     getGlobalSettings,
+    setGlobalSettings,
     setState,
     setTitle,
     setImage,
