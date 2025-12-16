@@ -137,10 +137,36 @@ export default function (name: string) {
       console.log('[MQTTButton] Action exists:', !!action);
 
       if (action) {
+        // Save SVG to vue/public/images/last.svg RIGHT BEFORE setImage
+        try {
+          if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+            console.log('[MQTTButton] Saving SVG to file RIGHT BEFORE setImage...');
+            const saveResponse = await fetch('/api/save-svg', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ svg, path: 'vue/public/images/last.svg' })
+            });
+            
+            if (saveResponse.ok) {
+              const data = await saveResponse.json();
+              if (data.success) {
+                console.log('[MQTTButton] ✓ SVG saved to', data.path, 'RIGHT BEFORE setImage');
+              } else {
+                console.warn('[MQTTButton] Failed to save SVG:', data.error);
+              }
+            } else {
+              console.warn('[MQTTButton] Save request failed with status:', saveResponse.status);
+            }
+          }
+        } catch (error) {
+          console.warn('[MQTTButton] Failed to save SVG:', error);
+        }
+
         // Set SVG image instead of title
-        console.log('[MQTTButton] Setting image via action.setImage (after file save)...');
+        console.log('[MQTTButton] Setting image via action.setImage...');
         console.log('[MQTTButton] Data URL length:', dataUrl.length);
         console.log('[MQTTButton] Data URL preview:', dataUrl.substring(0, 150) + '...');
+        console.log('[MQTTButton] Data URL full:', dataUrl);
 
         action.setImage(dataUrl);
 

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144">
+  <rect x="0" y="0" width="144" height="144" rx="18" ry="18" fill="#111"/>
+  <text x="72" y="72" text-anchor="middle"
+        font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18"
+        fill="#fff" dominant-baseline="middle">
+    <tspan x="72" y="37" text-anchor="middle">line 1: max</tspan><tspan x="72" y="59" text-anchor="middle">line 2: maxlength 20</tspan><tspan x="72" y="81" text-anchor="middle">line 3: maxlength19</tspan><tspan x="72" y="103" text-anchor="middle">line 4: length  18</tspan><tspan x="72" y="125" text-anchor="middle">line 5: length 17</tspan>
+  </text>
+</svg>

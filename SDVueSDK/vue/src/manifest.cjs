@@ -53,7 +53,7 @@ const Actions = [
       {
         FontSize: '10',
         TitleAlignment: 'top',
-        // Image: 'images/default.png',
+        Image: 'images/default.png',
         ShowTitle: false
       }
     ],

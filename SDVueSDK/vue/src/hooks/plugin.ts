@@ -256,9 +256,17 @@ export const usePluginStore = defineStore('pluginStore', () => {
               target: 0
             }
           };
-          console.log('[Plugin Store] Sending setImage message:', JSON.stringify(message).substring(0, 200) + '...');
-          server.send(JSON.stringify(message));
-          console.log('[Plugin Store] setImage: Image sent successfully to context:', this.context);
+          const messageStr = JSON.stringify(message);
+          console.log('[Plugin Store] ========== setImage Message ==========');
+          console.log('[Plugin Store] Full message length:', messageStr.length);
+          console.log('[Plugin Store] Message preview (first 300 chars):', messageStr.substring(0, 300));
+          console.log('[Plugin Store] Context:', this.context);
+          console.log('[Plugin Store] Data URL length:', url.length);
+          console.log('[Plugin Store] Data URL starts with data:image/svg+xml:', url.startsWith('data:image/svg+xml'));
+          console.log('[Plugin Store] WebSocket readyState:', server.readyState, '(OPEN=1)');
+          console.log('[Plugin Store] ======================================');
+          server.send(messageStr);
+          console.log('[Plugin Store] ✓ setImage: Message sent successfully to context:', this.context);
         } catch (error) {
           console.error('[Plugin Store] setImage: Error sending image:', error);
           // Queue for retry
